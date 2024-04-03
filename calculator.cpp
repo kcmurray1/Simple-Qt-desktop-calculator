@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <algorithm>
 //Constructor
 Calculator::Calculator()
 {
@@ -25,7 +26,7 @@ std::string Calculator::eval_expression()
 {
     std::string res = "";
     std::cout << "Evaluating " << expression_.str() << std::endl;
-
+    Calculator::clean_expression_();
     //Evaluate expression while checking for validity
     return res;
 }
@@ -41,7 +42,15 @@ std::string Calculator::get_expression()
     return expression_.str();
 }
 
+void Calculator::set_expression(std::string expr)
+{
+    expression_.str(expr);
+}
 void Calculator::clean_expression_()
 {
-    return;
+    std::string expr = expression_.str();
+    //Matt Price: https://stackoverflow.com/questions/83439/remove-spaces-from-stdstring-in-c
+    expr.erase(remove_if(expr.begin(), expr.end(), isspace), expr.end());
+    std::cout << "Cleaned to " << expr << std::endl;
+    expression_.str(expr);
 }

@@ -21,6 +21,8 @@ public:
 private slots:
     void on_push_button_clicked();
 
+    void on_txt_result_textEdited(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     Calculator calculator_;

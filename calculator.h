@@ -14,6 +14,7 @@ public:
     std::string eval_expression();
     void clear();
     std::string get_expression();
+    void set_expression(std::string);
 
 private:
     std::stringstream expression_;

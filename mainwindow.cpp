@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //Add event to all buttons
+    //Add click event to all buttons
     buttons_ = ui->centralwidget->findChildren<QPushButton *>();
     std::cout << "Found " << buttons_.size() << " Buttons" << std::endl;
     for(int i = 0; i < buttons_.size(); i++)
@@ -28,7 +28,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//Update Calculator based on user input
+//Update Calculator based on user interaction with UI buttons
 void MainWindow::on_push_button_clicked()
 {
     //Code snippet supplied by ChatGPT to access text property of QPushButton
@@ -39,10 +39,9 @@ void MainWindow::on_push_button_clicked()
         if (button_val.compare("Enter") == 0)
         {
             calculator_.eval_expression();
-            return;
         }
         //Clear calculation
-        if (button_val.compare("CLEAR") == 0)
+        else if (button_val.compare("CLEAR") == 0)
         {
             calculator_.clear();
         }
@@ -56,4 +55,11 @@ void MainWindow::on_push_button_clicked()
     }
 }
 
+
+//Update Calculator when user directly changes expression
+void MainWindow::on_txt_result_textEdited(const QString &arg1)
+{
+    //Update calculator
+    calculator_.set_expression(arg1.toStdString());
+}
 
