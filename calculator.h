@@ -10,12 +10,14 @@ public:
     ~Calculator();
 
     //Add symbols for calculations
-    void addSymbol(std::string);
-    std::string evalExpression();
+    void add_symbol(std::string);
+    std::string eval_expression();
     void clear();
-    std::string getExpression();
+    std::string get_expression();
+
 private:
     std::stringstream expression_;
+    void clean_expression_();
 };
 
 #endif // CALCULATOR_H

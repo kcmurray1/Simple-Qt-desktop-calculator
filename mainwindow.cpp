@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     //Add event to all buttons
-    buttons_ = ui->widget->findChildren<QPushButton *>();
+    buttons_ = ui->centralwidget->findChildren<QPushButton *>();
     std::cout << "Found " << buttons_.size() << " Buttons" << std::endl;
     for(int i = 0; i < buttons_.size(); i++)
     {
@@ -38,7 +38,7 @@ void MainWindow::on_push_button_clicked()
         //Check if Enter button has been clicked
         if (button_val.compare("Enter") == 0)
         {
-            calculator_.evalExpression();
+            calculator_.eval_expression();
             return;
         }
         //Clear calculation
@@ -49,10 +49,10 @@ void MainWindow::on_push_button_clicked()
         //Add to Calculation
         else
         {
-            calculator_.addSymbol(button_val);
+            calculator_.add_symbol(button_val);
         }
         //Update UI
-        ui->txt_result->setText(QString::fromStdString(calculator_.getExpression()));
+        ui->txt_result->setText(QString::fromStdString(calculator_.get_expression()));
     }
 }
 
