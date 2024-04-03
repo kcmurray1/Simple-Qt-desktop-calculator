@@ -1,8 +1,10 @@
 #include "calculator.h"
+#include "expression_tree.h"
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <algorithm>
+
 //Constructor
 Calculator::Calculator()
 {
@@ -26,8 +28,10 @@ std::string Calculator::eval_expression()
 {
     std::string res = "";
     std::cout << "Evaluating " << expression_.str() << std::endl;
+    //Remove spaces from expression
     Calculator::clean_expression_();
     //Evaluate expression while checking for validity
+    ExpressionTree evaluator = ExpressionTree(expression_.str());
     return res;
 }
 

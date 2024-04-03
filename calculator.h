@@ -2,6 +2,8 @@
 #define CALCULATOR_H
 
 #include <sstream>
+#include "expression_tree.h"
+
 class Calculator
 {
 public:

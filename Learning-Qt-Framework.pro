@@ -10,11 +10,13 @@ CONFIG += c++17
 
 SOURCES += \
     calculator.cpp \
+    expression_tree.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     calculator.h \
+    expression_tree.h \
     mainwindow.h
 
 FORMS += \
