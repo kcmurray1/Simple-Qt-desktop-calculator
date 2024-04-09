@@ -1,10 +1,14 @@
 #include "expression_tree.h"
 #include <iostream>
 #include <unordered_set>
+#include <map>
 #include <cmath>
 //Offers quick lookups https://cplusplus.com/reference/unordered_set/unordered_set/find/
 const std::unordered_set<char> ExpressionTree::kValidOperations = {'+', '-', '*', '/'};
 const std::unordered_set<char> ExpressionTree::kOrderedOperations = {'*', '/'};
+std::map<std::string, char> ExpressionTree::kTrigFunctions = {{"sin", 's'},
+                                                                    {"cos", 'c'},
+                                                                    {"tan", 't'}};
 
 void Node::print()
 {
@@ -56,11 +60,26 @@ ExpressionTree::~ExpressionTree()
 Node * ExpressionTree::eval_expr_(std::string expr)
 {
     if (expr.empty()) return 0;
-
+    //Used to build special functions such as trig functions
+    std::string special_func = "";
     //Try to build a tree
-    for (const char val: expr)
+    for (char val: expr)
     {
-        if (!insert(val)) return NULL;
+        char inserted_val = val;
+        if(!isdigit(val) && !is_operation(val) && !is_special_func(special_func))
+        {
+            special_func += val;
+            continue;
+        }
+        if(is_special_func(special_func))
+        {
+            inserted_val = kTrigFunctions[special_func];
+        }
+        if (!insert(inserted_val))
+        {
+            return NULL;
+        }
+
     }
     //Calculate the result
     double res = calculate(root_);
@@ -78,6 +97,11 @@ Node * ExpressionTree::eval_expr_(std::string expr)
     }
     expr_ = res_str;
     return 0;
+}
+
+bool ExpressionTree::is_special_func(std::string func)
+{
+    return kTrigFunctions.find(func) != kTrigFunctions.end();
 }
 
 bool ExpressionTree::is_ordered_op(char op)
@@ -101,7 +125,7 @@ bool ExpressionTree::is_operation(char data)
 
 bool ExpressionTree::insert(char data)
 {
-    // std::cout << "inserting " << data << std::endl;
+    std::cout << "inserting " << data << std::endl;
     //Case: Tree is Empty
     if (!root_)
     {
@@ -190,20 +214,21 @@ double ExpressionTree::calculate(Node * n)
     double left_val = calculate(n->left);
     double right_val = calculate(n->right);
 
-
+    //Basic operations
     if (n->val == "+")
     {
         return left_val + right_val;
     }
-    else if (n->val == "-")
+    if (n->val == "-")
     {
         return left_val - right_val;
     }
-    else if (n->val == "/")
+    if (n->val == "/")
     {
         return left_val / right_val;
     }
-    else
+    if (n->val == "*")
+    {
         return left_val * right_val;
-
+    }
 }

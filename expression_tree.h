@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <unordered_set>
+#include <map>
 #include <cmath>
 class Node{
     friend class ExpressionTree;
@@ -29,6 +30,7 @@ public:
     void print();
     static const std::unordered_set<char> kValidOperations;
     static const std::unordered_set<char> kOrderedOperations;
+    static std::map<std::string, char> kTrigFunctions;
 private:
     std::string expr_;
     Node * root_;
@@ -37,7 +39,7 @@ private:
     double calculate(Node *);
     bool is_ordered_op(char);
     bool is_operation(char);
-
+    bool is_special_func(std::string);
 };
 
 #endif // EXPRESSION_TREE_H
