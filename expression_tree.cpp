@@ -1,5 +1,11 @@
 #include "expression_tree.h"
 #include <iostream>
+#include <unordered_set>
+#include <cmath>
+//Offers quick lookups https://cplusplus.com/reference/unordered_set/unordered_set/find/
+const std::unordered_set<char> ExpressionTree::kValidOperations = {'+', '-', '*', '/'};
+const std::unordered_set<char> ExpressionTree::kOrderedOperations = {'*', '/'};
+
 void Node::print()
 {
     std::cout << "Val: " << val << " Parent: ";
@@ -33,6 +39,7 @@ ExpressionTree::ExpressionTree(std::string expr)
     root_ = 0;
     expr_ = expr;
     eval_expr_(expr_);
+
     // std::cout << "Converting " << expr << " into ExpressionTree" << std::endl;
 }
 
@@ -46,103 +53,109 @@ ExpressionTree::~ExpressionTree()
     }
 }
 
-void ExpressionTree::eval_expr()
-{
-    eval_expr_(expr_);
-}
-
 Node * ExpressionTree::eval_expr_(std::string expr)
 {
     if (expr.empty()) return 0;
 
     //Try to build a tree
-    for (char val: expr)
+    for (const char val: expr)
     {
-        insert(val);
+        if (!insert(val)) return NULL;
     }
     //Calculate the result
     double res = calculate(root_);
-    std::cout << "Answer is: " << res << std::endl;
+    std::string res_str = std::to_string(res);
+
+    //Format result
+    //Remove trailing zeros
+    while(res_str.back() == '0')
+    {
+        res_str.pop_back();
+    }
+    if(res_str.back() == '.')
+    {
+        res_str.pop_back();
+    }
+    expr_ = res_str;
     return 0;
 }
 
-bool ExpressionTree::is_ordered_op(std::string op)
+bool ExpressionTree::is_ordered_op(char op)
 {
-    return (op == "*" || op == "/");
+    if (!is_operation(op)) return false;
+
+    std::unordered_set<char>::const_iterator res = kOrderedOperations.find(op);
+
+    return (res != kOrderedOperations.end());
 }
 
-void ExpressionTree::insert(char data)
+bool ExpressionTree::is_operation(char data)
 {
+    if (isdigit(data)) return false;
+
+    std::unordered_set<char>::const_iterator res = kValidOperations.find(data);
+
+    return (res != kValidOperations.end());
+
+}
+
+bool ExpressionTree::insert(char data)
+{
+    // std::cout << "inserting " << data << std::endl;
     //Case: Tree is Empty
     if (!root_)
     {
         root_ = new Node();
         root_->set_data(data);
-        return;
+        return true;
     }
-    Node * cur_node = root_;
-    Node * parent_node = 0;
+
     Node * n = new Node();
     n->set_data(data);
-    //Logic to traverse tree
-    while(cur_node)
+
+    //Case: operation, set root_ as left child of operation
+    if((!isdigit(data) && !is_ordered_op(data)) || (root_->is_number && is_ordered_op(data)))
     {
-        if(is_ordered_op(cur_node->val) && !isdigit(data))
-        {
-            double val_a = stod(cur_node->left->val);
-            double val_b = stod(cur_node->right->val);
-            if (cur_node->val == "*")
-            {
-                cur_node->val = val_a * val_b;
-            }
-            else
-            {
-                cur_node->val = val_a / val_b;
-            }
-            cur_node->is_number = true;
-            Node * to_rmv = cur_node->left;
-            delete to_rmv;
-
-            to_rmv = cur_node->right;
-            delete to_rmv;
-        }
-
-        //Operator
-        if (cur_node->is_number && !isdigit(data))
-        {
-            //make operator(Node n) the parent of current node
-            n->parent = parent_node;
-            n->left = cur_node;
-            //Update root if need to
-            if (cur_node == root_)
-                root_ = n;
-            cur_node->parent = n;
-            if (parent_node)
-                parent_node->right = n;
-            return;
-
-        }
-        //Building number
-        if (cur_node->is_number && isdigit(data))
-        {
-            cur_node->set_data(data);
-            return;
-        }
-
-        //Traverse tree
-        parent_node = cur_node;
-        //All data goes to the right of an operator
-        cur_node = cur_node->right;
-
-
+        n->left = root_;
+        root_->parent = n;
+        root_ = n;
+        return true;
     }
-    //Set number to right sight of operator
-    if (!cur_node && !parent_node->is_number && isdigit(data))
+
+    Node * cur_node = root_;
+    Node * parent_node = 0;
+
+    //Traverse until we reach a leaf
+    while(cur_node->right)
     {
+        parent_node = cur_node;
+        cur_node = cur_node->right;
+    }
+    //Case: number after number
+    if(cur_node->is_number && isdigit(data))
+    {
+        cur_node->set_data(data);
+    }
+    //Case: number after operation
+    if(!cur_node->is_number && isdigit(data))
+    {
+        cur_node->right = n;
+        n->parent = cur_node;
+    }
+    //Case: ordered_operation after number
+    if(cur_node->is_number && is_ordered_op(data))
+    {
+        //make cur_node the left child of the ordered operation
+        n->left = cur_node;
+        cur_node->parent = n;
+
+        //Attach to tree
         n->parent = parent_node;
         parent_node->right = n;
     }
-    return;
+
+    return true;
+
 }
 
 //Wrapper for inorder traversal
@@ -172,6 +185,7 @@ void ExpressionTree::inorder(Node * n)
 
 double ExpressionTree::calculate(Node * n)
 {
+    if(!n) return 0.0;
     if(!n->left && !n->right) return stod(n->val);
     double left_val = calculate(n->left);
     double right_val = calculate(n->right);

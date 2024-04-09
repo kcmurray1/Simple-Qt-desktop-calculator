@@ -32,7 +32,8 @@ std::string Calculator::eval_expression()
     Calculator::clean_expression_();
     //Evaluate expression while checking for validity
     ExpressionTree evaluator = ExpressionTree(expression_.str());
-    evaluator.print();
+    expression_.str(evaluator.get_expr());
+    // evaluator.print();
     return res;
 }
 

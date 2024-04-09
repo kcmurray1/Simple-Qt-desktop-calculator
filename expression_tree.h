@@ -2,7 +2,8 @@
 #define EXPRESSION_TREE_H
 
 #include <iostream>
-
+#include <unordered_set>
+#include <cmath>
 class Node{
     friend class ExpressionTree;
 public:
@@ -23,17 +24,20 @@ class ExpressionTree
 public:
     ExpressionTree(std::string);
     ~ExpressionTree();
-    void insert(char);
+    bool insert(char);
+    std::string get_expr(){return expr_;}
     void print();
-    void eval_expr();
-
+    static const std::unordered_set<char> kValidOperations;
+    static const std::unordered_set<char> kOrderedOperations;
 private:
     std::string expr_;
     Node * root_;
     void inorder(Node *);
     Node * eval_expr_(std::string);
     double calculate(Node *);
-    bool is_ordered_op(std::string);
+    bool is_ordered_op(char);
+    bool is_operation(char);
+
 };
 
 #endif // EXPRESSION_TREE_H
