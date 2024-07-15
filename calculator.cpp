@@ -20,6 +20,11 @@ Calculator::~Calculator()
 //Add digit to expression_
 void Calculator::add_symbol(std::string symbol)
 {
+    //clean expression if previously undefined
+    if (expression_.str() == "inf" || expression_.str() == "Undefined")
+    {
+        expression_.str("");
+    }
     expression_ << symbol;
 }
 

@@ -7,8 +7,8 @@
 const std::unordered_set<char> ExpressionTree::kValidOperations = {'+', '-', '*', '/'};
 const std::unordered_set<char> ExpressionTree::kOrderedOperations = {'*', '/'};
 std::map<std::string, char> ExpressionTree::kTrigFunctions = {{"sin", 's'},
-                                                                    {"cos", 'c'},
-                                                                    {"tan", 't'}};
+                                                             {"cos", 'c'},
+                                                             {"tan", 't'}};
 
 void Node::print()
 {
@@ -83,7 +83,11 @@ Node * ExpressionTree::eval_expr_(std::string expr)
     }
     //Calculate the result
     double res = calculate(root_);
-    std::string res_str = std::to_string(res);
+    std::string res_str = "Undefined";
+    if(res)
+    {
+        res_str = std::to_string(res);
+    }
 
     //Format result
     //Remove trailing zeros
@@ -231,4 +235,6 @@ double ExpressionTree::calculate(Node * n)
     {
         return left_val * right_val;
     }
+
+
 }

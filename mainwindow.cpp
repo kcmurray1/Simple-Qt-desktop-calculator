@@ -17,8 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     {
         QObject::connect(buttons_[i], SIGNAL(clicked()), this, SLOT(on_push_button_clicked()));
     }
-
-
 }
 
 //Destructor
@@ -35,13 +33,16 @@ void MainWindow::on_push_button_clicked()
     QPushButton *clickedButton = qobject_cast<QPushButton*>(sender());
     if (clickedButton) {
         std::string button_val = clickedButton->text().toStdString();
+        for(unsigned int i = 0; i < button_val.length(); i++)
+            button_val[i] = tolower(button_val[i]);
+
         //Check if Enter button has been clicked
-        if (button_val.compare("Enter") == 0)
+        if (button_val.compare("enter") == 0)
         {
             calculator_.eval_expression();
         }
         //Clear calculation
-        else if (button_val.compare("CLEAR") == 0)
+        else if (button_val.compare("clear") == 0)
         {
             calculator_.clear();
         }
@@ -52,6 +53,10 @@ void MainWindow::on_push_button_clicked()
         }
         //Update UI
         ui->txt_result->setText(QString::fromStdString(calculator_.get_expression()));
+        if (button_val.compare("enter") == 0)
+        {
+            calculator_.clear();
+        }
     }
 }
 

@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <map>
 #include <cmath>
+
+//Node Helper class for ExpressionTree
 class Node{
     friend class ExpressionTree;
 public:
